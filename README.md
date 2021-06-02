@@ -1,5 +1,7 @@
 # minikube-nfs
 
+## NFS Static Provisioning
+
 ```
 sudo apt install nfs-kernel-server nfs-common portmap -y
 sudo systemctl status nfs-server
@@ -48,12 +50,13 @@ kubectl get svc
 # $ nfs-nginx    NodePort    10.102.226.40   <none>        80:32669/TCP
 ```
 
-## Dynamic Provisioning
+## NFS Dynamic Provisioning
 
+```
 sudo mkdir -p /srv/nfs/mydata2
 sudo chown 777 /srv/nfs/mydata2
 vi /etc/exports
-# /srv/nfs/mydata2  *(rw,sync,no_subtree_check,no_root_squash,insecure)
+/srv/nfs/mydata2  *(rw,sync,no_subtree_check,no_root_squash,insecure)
 sudo exportfs -rv
 showmoount -e 
 kubectl apply -f rbac.yaml
