@@ -48,3 +48,36 @@ kubectl get svc
 # $ nfs-nginx    NodePort    10.102.226.40   <none>        80:32669/TCP
 ```
 
+## Dynamic Provisioning
+
+sudo mkdir -p /srv/nfs/mydata2
+sudo chown 777 /srv/nfs/mydata2
+vi /etc/exports
+# /srv/nfs/mydata2  *(rw,sync,no_subtree_check,no_root_squash,insecure)
+sudo exportfs -rv
+showmoount -e 
+kubectl apply -f rbac.yaml
+kubectl get clusterrole,role 
+kubectl create -f nfs_class.yaml
+bubectl get storageclass
+kubectl apply -f nfs_pod_provision.yaml
+kubectl describe po nfs-pod-provisioner-66ffbbbbf-sg4kh
+kubectl get pv,pvc
+kubectl apply -f  nfs_pvc_dynamic.yaml
+ls /srv/nfs/mydata2/
+# default-nfs-pvc-test-pvc-620ff5b1-b2df-11e9-a66a-080027db98ca
+
+kubectl apply -f nfs-nginx.yaml
+kubectl get po 
+kubectl exec -it po nfs-nginx-76c48f6466-fnkh9 bash
+cd mydata2/
+touch testfile.txt
+exit
+```
+
+Now in the host:
+
+```
+ls /srv/nfs/mydata2/default-nfs-pvc-test-pvc-620ff5b1-b2df-11e9-a66a-080027db98ca/
+# testfile.txt
+```
