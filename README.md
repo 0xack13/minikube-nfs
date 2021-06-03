@@ -30,10 +30,23 @@ mount -t nfs 192.168.1.7:/srv/nfs/mydata /mnt
 mount | grep mydata
 
 # 192.168.1.7:/srv/nfs/mydata on /mnt type nfs4
+```
 
+Create the resources:
+
+```
+# create the PV
+kubectl apply -f nfs.yaml
+
+# create the PVC
+kubectl apply -f nfs_pvc.yaml
+
+#cerate the POD that uses PVC volume
+kubectl apply -f nfs_pod.yaml
 ```
 
 Log into the pod:
+
 ```
 kubectl exec -it nfs-nginx-6cb55d48f7-q2bvd bash
 sudo vi /usr/share/nginx/html/test.html
@@ -41,6 +54,7 @@ sudo vi /usr/share/nginx/html/test.html
 ```
 
 In the host of the minikube instance:
+
 ```
 ls /srv/nfs/mydata
 cat /srv/nfs/mydata/test.html
@@ -58,9 +72,9 @@ sudo chown 777 /srv/nfs/mydata2
 vi /etc/exports
 /srv/nfs/mydata2  *(rw,sync,no_subtree_check,no_root_squash,insecure)
 sudo exportfs -rv
-showmoount -e 
+showmoount -e
 kubectl apply -f rbac.yaml
-kubectl get clusterrole,role 
+kubectl get clusterrole,role
 kubectl create -f nfs_class.yaml
 bubectl get storageclass
 kubectl apply -f nfs_pod_provision.yaml
@@ -71,7 +85,7 @@ ls /srv/nfs/mydata2/
 # default-nfs-pvc-test-pvc-620ff5b1-b2df-11e9-a66a-080027db98ca
 
 kubectl apply -f nfs-nginx.yaml
-kubectl get po 
+kubectl get po
 kubectl exec -it po nfs-nginx-76c48f6466-fnkh9 bash
 cd mydata2/
 touch testfile.txt
